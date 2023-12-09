@@ -1,26 +1,21 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Provider } from 'react-redux';
+import { Map } from 'src/components/Map';
+import { store } from 'src/store';
+import { FeaturesContext } from 'src/store/features';
+import { useGetFeaturesQuery } from 'src/services/features';
+import styles from './App.module.css';
 
-function App() {
+export const App = () => {
+  const { data, isLoading, isSuccess } = useGetFeaturesQuery();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={styles.container}>
+      <Provider store={store}>
+        <FeaturesContext.Provider value={{ data, isLoading, isSuccess }}>
+          <Map />
+        </FeaturesContext.Provider>
+      </Provider>
     </div>
   );
-}
-
-export default App;
+};
