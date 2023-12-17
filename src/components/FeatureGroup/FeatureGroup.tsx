@@ -4,24 +4,16 @@ import {
   GeoJSON,
   Popup,
 } from 'react-leaflet';
-import { FeaturesData } from 'src/services/features';
-import { useFeaturesData } from 'src/store/features';
+import { Feature, FeaturesData } from 'src/services/features';
 import featureStyles from './featureStyles';
 
 type FeatureGroupProps = {
   featureType: keyof FeaturesData;
+  features: Feature[];
 };
 
-export const FeatureGroup = ({ featureType }: FeatureGroupProps) => {
-  const data = useFeaturesData();
-
-  if (!data) {
-    return null;
-  }
-
-  const features = data![featureType];
+export const FeatureGroup = ({ featureType, features }: FeatureGroupProps) => {
   const style = featureStyles[featureType];
-
   return (
     <LeafletFeatureGroup>
       {features.map((feature) => (

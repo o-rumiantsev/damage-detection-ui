@@ -1,18 +1,20 @@
 import React from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { LatLngExpression, latLngBounds } from 'leaflet';
-import { GeoJsonObject } from 'geojson';
+import { Map as MapObject, LatLngExpression, latLngBounds } from 'leaflet';
+import { FeaturesData } from 'src/services/features';
 import { FeatureGroup } from '../FeatureGroup';
+import { MapEvents } from './MapEvents';
 import styles from './Map.module.css';
 
 type MapProps = {
+  featuresData: FeaturesData;
   zoomLevel?: number;
   maxZoomLevel?: number;
   minZoomLevel?: number;
   center?: LatLngExpression;
   maxBounds?: [southWest: LatLngExpression, northEast: LatLngExpression];
-  features?: GeoJsonObject;
+  onMoveEnd?: (map: MapObject) => void;
 };
 
 export const Map = ({
@@ -24,6 +26,8 @@ export const Map = ({
     [42.438, 12.053],
     [54.438, 48.053],
   ],
+  onMoveEnd = () => {},
+  featuresData,
 }: MapProps) => {
   return (
     <MapContainer
@@ -34,14 +38,21 @@ export const Map = ({
       minZoom={minZoomLevel}
       maxBounds={latLngBounds(...maxBounds)}
     >
+      <MapEvents onMoveEnd={onMoveEnd} />
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      <FeatureGroup featureType="noDamage" />
-      <FeatureGroup featureType="minorDamage" />
-      <FeatureGroup featureType="majorDamage" />
-      <FeatureGroup featureType="destroyed" />
+      <FeatureGroup featureType="noDamage" features={featuresData.noDamage} />
+      <FeatureGroup
+        featureType="minorDamage"
+        features={featuresData.minorDamage}
+      />
+      <FeatureGroup
+        featureType="majorDamage"
+        features={featuresData.majorDamage}
+      />
+      <FeatureGroup featureType="destroyed" features={featuresData.destroyed} />
     </MapContainer>
   );
 };
